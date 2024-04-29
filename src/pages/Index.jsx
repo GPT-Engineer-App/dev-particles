@@ -1,4 +1,4 @@
-import { Box, Text, Image, Flex, Tag, Input, Button } from '@chakra-ui/react';
+import { Box, Text, Image, Flex, Tag, Input, Button, useState } from '@chakra-ui/react';
 import { FaSearch, FaEnvelope } from 'react-icons/fa';
 
 const developers = [
@@ -9,16 +9,33 @@ const developers = [
 ];
 
 const Index = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredDevelopers, setFilteredDevelopers] = useState(developers);
   return (
     <Box p={5}>
       <Image src="/images/landing-page.jpg" alt="Developers working" boxSize="full" />
       <Text fontSize="2xl" fontWeight="bold" mt={5}>Welcome to Particles</Text>
       <Text fontSize="lg" my={3}>Discover top software talent specialized in web technologies.</Text>
       <Flex mb={5}>
-        <Input placeholder="Search developers" mr={2} />
+        <Input
+          placeholder="Search developers"
+          mr={2}
+          value={searchTerm}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSearchTerm(value);
+            const lowercasedValue = value.toLowerCase();
+            const filtered = developers.filter(dev =>
+              dev.name.toLowerCase().includes(lowercasedValue) ||
+              dev.location.toLowerCase().includes(lowercasedValue) ||
+              dev.technologies.some(tech => tech.toLowerCase().includes(lowercasedValue))
+            );
+            setFilteredDevelopers(filtered);
+          }}
+        />
         <Button leftIcon={<FaSearch />} colorScheme="blue">Search</Button>
       </Flex>
-      {developers.map(dev => (
+      {filteredDevelopers.map(dev => (
         <Flex key={dev.name} p={3} boxShadow="md" mb={2} align="center" justify="space-between">
           <Box>
             <Text fontWeight="bold">{dev.name}</Text>
